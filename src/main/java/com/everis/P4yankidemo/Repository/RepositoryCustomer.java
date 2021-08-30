@@ -1,15 +1,14 @@
 package com.everis.P4yankidemo.Repository;
 
-import com.everis.P4yankidemo.Moodel.Customer;
-import java.util.Map;
-import java.util.UUID;
-
+import com.everis.P4yankidemo.Constants.Constants;
+import com.everis.P4yankidemo.DTO.MessageFrom;
+import com.everis.P4yankidemo.Moodel.*;
+import java.util.*;
 import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class RepositoryCustomer implements RedisRepository {
@@ -18,6 +17,7 @@ public class RepositoryCustomer implements RedisRepository {
 
   @Autowired
   private RedisTemplate<String, Customer> redisTemplate;
+
   private HashOperations hashOperations;
 
   @PostConstruct
@@ -36,7 +36,24 @@ public class RepositoryCustomer implements RedisRepository {
   }
 
   @Override
-  public void save(Customer customer) {
+  public Mono<Object> save(
+    String firstName,
+    String lastName,
+    String numberPhone,
+    String emailAddress,
+    String typeDocument,
+    String numberDocument
+  ) {
+    Customer customer = new Customer(
+      firstName,
+      lastName,
+      numberPhone,
+      emailAddress,
+      typeDocument,
+      numberDocument,
+      null
+    );
     hashOperations.put(KEY, UUID.randomUUID().toString(), customer);
+    return Mono.just(new MessageFrom(Constants.MessageRequest.CORRECT_DATA));
   }
 }
