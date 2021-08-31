@@ -32,11 +32,17 @@ public class RepositoryCustomer implements RedisRepository {
 
   @Override
   public Customer findById(String id) {
-    return null;
+    return (Customer) hashOperations.get(KEY, id);
   }
 
   @Override
-  public Mono<Object> save(
+  public Mono<MessageFrom> delete(String id) {
+    hashOperations.delete(KEY, id);
+    return Mono.just(new MessageFrom(Constants.MessageRequest.CLIENT_DELETED_SUCCESS));
+  }
+
+  @Override
+  public Mono<MessageFrom> save(
     String firstName,
     String lastName,
     String numberPhone,

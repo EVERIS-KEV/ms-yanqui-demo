@@ -10,6 +10,6 @@ public class P4YankiDemoApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(P4YankiDemoApplication.class, args);
-    log.info("-SERVICIO MONEDERO VIRTUAL YANKI HABILITADO");
+    log.info("-SERVICIO MONEDERO VIRTUAL YANKI HABILITADO-");
   }
 }

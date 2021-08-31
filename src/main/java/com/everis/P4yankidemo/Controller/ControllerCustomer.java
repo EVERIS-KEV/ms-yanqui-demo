@@ -17,7 +17,7 @@ public class ControllerCustomer {
   @Autowired
   private RepositoryCustomer repository;
 
-  private Mono<Object> BindingResultErrors(BindingResult bindinResult) {
+  private Mono<MessageFrom> BindingResultErrors(BindingResult bindinResult) {
     String msg = "";
 
     for (int i = 0; i < bindinResult.getAllErrors().size(); i++) {
@@ -31,8 +31,13 @@ public class ControllerCustomer {
     return repository.findAll();
   }
 
+  @GetMapping("/{id}")
+  public Customer findAll(@PathVariable String id) {
+    return repository.findById(id);
+  }
+
   @PostMapping("/save")
-  public Mono<Object> save(@RequestBody @Valid CustomerForm customer, BindingResult bindinResult) {
+  public Mono<MessageFrom> saveCustomer(@RequestBody @Valid CustomerForm customer, BindingResult bindinResult) {
     if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
     return repository.save(
       customer.getFirstName(),
@@ -42,5 +47,10 @@ public class ControllerCustomer {
       customer.getTypeDocument(),
       customer.getNumberDocument()
     );
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public Mono<MessageFrom> deleteCustomer(@PathVariable String id) {
+    return repository.delete(id);
   }
 }
