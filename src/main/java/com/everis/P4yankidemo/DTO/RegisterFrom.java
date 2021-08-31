@@ -19,6 +19,7 @@ public class RegisterFrom {
   @Size(min = 9, message = "El número celular debe tener mas de 9 carácteres.")
   private String numberPhone;
 
+  @Email(message = "Debe ingresar un email.")
   @NotBlank(message = "El campo e-mail no debe estar vacio.")
   private String emailAddress;
 

@@ -24,18 +24,18 @@ public class RepositoryCustomer {
   private void init() {
     hashOperations = redisTemplate.opsForHash();
   }
-  
+
   private Mono<Boolean> existsId(String id) {
     Customer customer = (Customer) hashOperations.get(KEY_CUSTOMER, id);
     if (customer == null) return Mono.just(false);
 
     return Mono.just(true);
   }
-  
+
   public Map<String, Customer> findAll() {
     return hashOperations.entries(KEY_CUSTOMER);
   }
-  
+
   public Mono<Object> findById(String id) {
     if (!existsId(id).block()) return Mono.just(
       new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
@@ -44,24 +44,23 @@ public class RepositoryCustomer {
     Customer customer = (Customer) hashOperations.get(KEY_CUSTOMER, id);
     return Mono.just(customer);
   }
-  
+
   public Mono<MessageFrom> delete(String id) {
     if (!existsId(id).block()) return Mono.just(
       new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
     );
 
-    hashOperations.delete(KEY_CUSTOMER, id); 
+    hashOperations.delete(KEY_CUSTOMER, id);
     return Mono.just(new MessageFrom(Constants.MessageRequest.CLIENT_DELETED_SUCCESS));
   }
-  
-  public Mono<MessageFrom> save(
+
+  public Mono<Object> save(
     String firstName,
-    String lastName
+    String lastName,
+    String typeDocument,
+    String numberDocument
   ) {
-    Customer customer = new Customer(
-      firstName,
-      lastName 
-    ); 
+    Customer customer = new Customer(firstName, lastName, typeDocument, numberDocument);
 
     hashOperations.put(KEY_CUSTOMER, UUID.randomUUID().toString(), customer);
     return Mono.just(new MessageFrom(Constants.MessageRequest.CORRECT_DATA));

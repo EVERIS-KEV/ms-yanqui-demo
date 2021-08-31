@@ -10,9 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Movement implements Serializable {
+
   private static final long serialVersionUID = 7156526077883281623L;
-  private LocalDateTime dateCreated = LocalDateTime.now(ZoneId.of("America/Lima"));
-  private String IdYankiAccount;
+  private static final LocalDateTime dateCreated = LocalDateTime.now(ZoneId.of("America/Lima"));
+  private String DNICustomer;
   private String NumberEmisor;
   private String NumberReceptor;
   private Double amount;
