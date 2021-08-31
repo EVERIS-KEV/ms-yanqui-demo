@@ -35,7 +35,7 @@ public class ControllerCustomer {
   }
 
   @GetMapping("/findAccountAll")
-  public Map<String, YankiAccount> findAccountByDocument( ) {
+  public Map<String, YankiAccount> findAccountByDocument() {
     return Service.findAllYankiAccount();
   }
 
@@ -50,10 +50,7 @@ public class ControllerCustomer {
   }
 
   @PostMapping("/access")
-  public Mono<Object> access(
-    @RequestBody @Valid AccessFrom model,
-    BindingResult bindinResult
-  ) {
+  public Mono<Object> access(@RequestBody @Valid AccessFrom model, BindingResult bindinResult) {
     if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
     return Service.changeStateYankiAccount(model.getNumberPhone(), model.getAccessCode());
   }

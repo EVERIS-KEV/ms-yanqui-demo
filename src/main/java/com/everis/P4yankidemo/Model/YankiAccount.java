@@ -8,7 +8,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class YankiAccount  { 
+public class YankiAccount {
+
   private static final LocalDateTime dateCreated = LocalDateTime.now(ZoneId.of("America/Lima"));
 
   private String numberPhone;
@@ -18,5 +19,5 @@ public class YankiAccount  {
   private String numberDocument;
 
   private String accessCode;
-  private Boolean State; 
+  private Boolean State;
 }

@@ -39,12 +39,12 @@ public class RepositoryYankiAccount {
       .getValue();
   }
 
-  public Mono<Object> update(YankiAccount yankiAccount){
+  public Mono<Object> update(YankiAccount yankiAccount) {
     hashOperations.put(KEY_YANKI, yankiAccount.getNumberPhone(), yankiAccount);
     return Mono.just(new MessageFrom(Constants.MessageRequest.CORRECT_DATA));
   }
 
-  public Mono<Object> delete(String dni){
+  public Mono<Object> delete(String dni) {
     hashOperations.delete(KEY_YANKI, findByDni(dni));
     return Mono.just(new MessageFrom(Constants.MessageRequest.CORRECT_DATA));
   }

@@ -93,11 +93,11 @@ public class ServiceYankiDemo {
       .filter(c -> c.getValue().getNumberPhone().equals(numberPhone))
       .findFirst()
       .get()
-      .getValue(); 
+      .getValue();
 
-      yankiAccount.setState(true);
-      yankiAccount.setAccessCode(accessCode);   
-      RepositoryYankiAccount.delete(yankiAccount.getNumberDocument());
+    yankiAccount.setState(true);
+    yankiAccount.setAccessCode(accessCode);
+    RepositoryYankiAccount.delete(yankiAccount.getNumberDocument());
 
     return RepositoryYankiAccount.update(yankiAccount);
   }
@@ -110,7 +110,7 @@ public class ServiceYankiDemo {
     return RepositoryCustomer.delete(id);
   }
 
-  public Map<String, YankiAccount> findAllYankiAccount(){
+  public Map<String, YankiAccount> findAllYankiAccount() {
     return RepositoryYankiAccount.findAll();
   }
 }
