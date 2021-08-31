@@ -2,7 +2,7 @@ package com.everis.P4yankidemo.Repository;
 
 import com.everis.P4yankidemo.Constants.Constants;
 import com.everis.P4yankidemo.DTO.MessageFrom;
-import com.everis.P4yankidemo.Moodel.*;
+import com.everis.P4yankidemo.Model.*;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,29 @@ public class RepositoryCustomer implements RedisRepository {
   }
 
   @Override
-  public Customer findById(String id) {
-    return (Customer) hashOperations.get(KEY, id);
+  public Mono<Boolean> existsId(String id) {
+    Customer customer = (Customer) hashOperations.get(KEY, id);
+    if (customer == null) return Mono.just(false);
+
+    return Mono.just(true);
+  }
+
+  @Override
+  public Mono<Object> findById(String id) {
+    if (!existsId(id).block()) return Mono.just(
+      new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
+    );
+
+    Customer customer = (Customer) hashOperations.get(KEY, id);
+    return Mono.just(customer);
   }
 
   @Override
   public Mono<MessageFrom> delete(String id) {
+    if (!existsId(id).block()) return Mono.just(
+      new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
+    );
+
     hashOperations.delete(KEY, id);
     return Mono.just(new MessageFrom(Constants.MessageRequest.CLIENT_DELETED_SUCCESS));
   }

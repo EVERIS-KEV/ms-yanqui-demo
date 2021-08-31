@@ -2,7 +2,7 @@ package com.everis.P4yankidemo.Controller;
 
 import com.everis.P4yankidemo.DTO.CustomerForm;
 import com.everis.P4yankidemo.DTO.MessageFrom;
-import com.everis.P4yankidemo.Moodel.Customer;
+import com.everis.P4yankidemo.Model.Customer;
 import com.everis.P4yankidemo.Repository.RepositoryCustomer;
 import java.util.Map;
 import javax.validation.*;
@@ -32,12 +32,15 @@ public class ControllerCustomer {
   }
 
   @GetMapping("/{id}")
-  public Customer findAll(@PathVariable String id) {
+  public Mono<Object> findAll(@PathVariable String id) {
     return repository.findById(id);
   }
 
   @PostMapping("/save")
-  public Mono<MessageFrom> saveCustomer(@RequestBody @Valid CustomerForm customer, BindingResult bindinResult) {
+  public Mono<MessageFrom> saveCustomer(
+    @RequestBody @Valid CustomerForm customer,
+    BindingResult bindinResult
+  ) {
     if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
     return repository.save(
       customer.getFirstName(),

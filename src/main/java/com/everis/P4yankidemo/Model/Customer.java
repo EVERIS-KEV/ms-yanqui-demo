@@ -1,4 +1,4 @@
-package com.everis.P4yankidemo.Moodel;
+package com.everis.P4yankidemo.Model;
 
 import java.io.Serializable;
 import lombok.*;
