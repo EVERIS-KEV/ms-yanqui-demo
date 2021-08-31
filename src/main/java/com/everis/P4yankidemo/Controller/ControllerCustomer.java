@@ -5,6 +5,7 @@ import com.everis.P4yankidemo.DTO.MessageFrom;
 import com.everis.P4yankidemo.DTO.RegisterFrom;
 import com.everis.P4yankidemo.Model.Customer;
 import com.everis.P4yankidemo.Model.YankiAccount;
+import com.everis.P4yankidemo.Producer.ProducerEmisor;
 import com.everis.P4yankidemo.Service.ServiceYankiDemo;
 import java.util.Map;
 import javax.validation.*;
@@ -20,11 +21,14 @@ public class ControllerCustomer {
   @Autowired
   private ServiceYankiDemo Service;
 
+  @Autowired
+  private ProducerEmisor producerEmisor;
+
   private Mono<Object> BindingResultErrors(BindingResult bindinResult) {
     String msg = "";
 
-    for (int i = 0; i < bindinResult.getAllErrors().size(); i++) msg =
-      bindinResult.getAllErrors().stream().findFirst().get().getDefaultMessage();
+    for (int i = 0; i < bindinResult.getAllErrors().size(); i++)
+      msg = bindinResult.getAllErrors().stream().findFirst().get().getDefaultMessage();
 
     return Mono.just(new MessageFrom(msg));
   }
@@ -40,22 +44,27 @@ public class ControllerCustomer {
   }
 
   @PostMapping("/registerCustomer")
-  public Mono<Object> saveCustomer(
-    @RequestBody @Valid RegisterFrom model,
-    BindingResult bindinResult
-  ) {
-    if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
+  public Mono<Object> saveCustomer(@RequestBody @Valid RegisterFrom model, BindingResult bindinResult) {
+    if (bindinResult.hasErrors())
+      return BindingResultErrors(bindinResult);
 
     return Service.save(model);
   }
 
   @PostMapping("/access")
   public Mono<Object> access(@RequestBody @Valid AccessFrom model, BindingResult bindinResult) {
-    if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
+    if (bindinResult.hasErrors())
+      return BindingResultErrors(bindinResult);
     return Service.changeStateYankiAccount(model.getNumberPhone(), model.getAccessCode());
   }
 
-  //--
+  @PostMapping("/transaction")
+  public Mono<Object> transaction() {
+    producerEmisor.sendMovement("GAAAAAAAAAAA");
+    return Mono.just(new MessageFrom("GO..."));
+  }
+
+  // --
 
   @GetMapping("/listCustomer")
   public Map<String, Customer> findAll() {
