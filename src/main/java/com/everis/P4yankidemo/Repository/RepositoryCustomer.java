@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class RepositoryCustomer implements RedisRepository {
+public class RepositoryCustomer {
 
-  private static final String KEY = "YANKI";
+  private static final String KEY_CUSTOMER = "CUSTOMER";
 
   @Autowired
   private RedisTemplate<String, Customer> redisTemplate;
@@ -24,59 +24,46 @@ public class RepositoryCustomer implements RedisRepository {
   private void init() {
     hashOperations = redisTemplate.opsForHash();
   }
-
-  @Override
-  public Map<String, Customer> findAll() {
-    return hashOperations.entries(KEY);
-  }
-
-  @Override
-  public Mono<Boolean> existsId(String id) {
-    Customer customer = (Customer) hashOperations.get(KEY, id);
+  
+  private Mono<Boolean> existsId(String id) {
+    Customer customer = (Customer) hashOperations.get(KEY_CUSTOMER, id);
     if (customer == null) return Mono.just(false);
 
     return Mono.just(true);
   }
-
-  @Override
+  
+  public Map<String, Customer> findAll() {
+    return hashOperations.entries(KEY_CUSTOMER);
+  }
+  
   public Mono<Object> findById(String id) {
     if (!existsId(id).block()) return Mono.just(
       new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
     );
 
-    Customer customer = (Customer) hashOperations.get(KEY, id);
+    Customer customer = (Customer) hashOperations.get(KEY_CUSTOMER, id);
     return Mono.just(customer);
   }
-
-  @Override
+  
   public Mono<MessageFrom> delete(String id) {
     if (!existsId(id).block()) return Mono.just(
       new MessageFrom(Constants.MessageRequest.INCORRECT_DATA)
     );
 
-    hashOperations.delete(KEY, id);
+    hashOperations.delete(KEY_CUSTOMER, id); 
     return Mono.just(new MessageFrom(Constants.MessageRequest.CLIENT_DELETED_SUCCESS));
   }
-
-  @Override
+  
   public Mono<MessageFrom> save(
     String firstName,
-    String lastName,
-    String numberPhone,
-    String emailAddress,
-    String typeDocument,
-    String numberDocument
+    String lastName
   ) {
     Customer customer = new Customer(
       firstName,
-      lastName,
-      numberPhone,
-      emailAddress,
-      typeDocument,
-      numberDocument,
-      null
-    );
-    hashOperations.put(KEY, UUID.randomUUID().toString(), customer);
+      lastName 
+    ); 
+
+    hashOperations.put(KEY_CUSTOMER, UUID.randomUUID().toString(), customer);
     return Mono.just(new MessageFrom(Constants.MessageRequest.CORRECT_DATA));
   }
 }

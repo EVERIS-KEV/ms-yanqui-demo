@@ -1,9 +1,11 @@
 package com.everis.P4yankidemo.Controller;
 
-import com.everis.P4yankidemo.DTO.CustomerForm;
 import com.everis.P4yankidemo.DTO.MessageFrom;
+import com.everis.P4yankidemo.DTO.RegisterFrom;
 import com.everis.P4yankidemo.Model.Customer;
-import com.everis.P4yankidemo.Repository.RepositoryCustomer;
+
+import com.everis.P4yankidemo.Service.ServiceCustomer;
+
 import java.util.Map;
 import javax.validation.*;
 import org.springframework.beans.factory.annotation.*;
@@ -12,48 +14,43 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequestMapping("/customer")
 public class ControllerCustomer {
 
   @Autowired
-  private RepositoryCustomer repository;
+  private ServiceCustomer Service;
 
   private Mono<MessageFrom> BindingResultErrors(BindingResult bindinResult) {
     String msg = "";
 
-    for (int i = 0; i < bindinResult.getAllErrors().size(); i++) {
-      msg = bindinResult.getAllErrors().get(0).getDefaultMessage();
-    }
+    for (int i = 0; i < bindinResult.getAllErrors().size(); i++) 
+      msg = bindinResult.getAllErrors().stream().findFirst().get().getDefaultMessage();
+    
     return Mono.just(new MessageFrom(msg));
   }
 
   @GetMapping("/")
-  public Map<String, Customer> findAll() {
-    return repository.findAll();
+  public Map<String, Customer> findAll() { 
+    return Service.findAll();
   }
 
   @GetMapping("/{id}")
-  public Mono<Object> findAll(@PathVariable String id) {
-    return repository.findById(id);
+  public Mono<Object> findById(@PathVariable String id) { 
+    return Service.findById(id);
   }
 
   @PostMapping("/save")
   public Mono<MessageFrom> saveCustomer(
-    @RequestBody @Valid CustomerForm customer,
+    @RequestBody @Valid RegisterFrom model,
     BindingResult bindinResult
   ) {
-    if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult);
-    return repository.save(
-      customer.getFirstName(),
-      customer.getLastName(),
-      customer.getNumberPhone(),
-      customer.getEmailAddress(),
-      customer.getTypeDocument(),
-      customer.getNumberDocument()
-    );
+    if (bindinResult.hasErrors()) return BindingResultErrors(bindinResult); 
+
+    return Service.save(model.getFirstName(), model.getLastName());
   }
 
   @DeleteMapping("/delete/{id}")
-  public Mono<MessageFrom> deleteCustomer(@PathVariable String id) {
-    return repository.delete(id);
+  public Mono<MessageFrom> deleteCustomer(@PathVariable String id) { 
+    return Service.delete(id);
   }
 }

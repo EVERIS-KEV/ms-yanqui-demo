@@ -6,7 +6,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageFrom {
-
+public class MessageFrom { 
   private String msg;
 }

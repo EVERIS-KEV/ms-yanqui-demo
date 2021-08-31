@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerForm {
+public class RegisterFrom {
 
   @NotBlank(message = "El campo nombre no debe estar vacio.")
   private String firstName;
